@@ -1,0 +1,17 @@
+.home-page {
+  background-color: #151515;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+  color: white;
+
+  button {
+    margin: 7px;
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+  }
+}

@@ -1,9 +1,14 @@
 import { httpService } from './httpService'
 
-export const codeService = {
+export const codeBlockService = {
   getById,
   save,
   remove,
+  query,
+}
+
+async function query() {
+  return await httpService.get(`code`)
 }
 
 async function getById(id: string) {

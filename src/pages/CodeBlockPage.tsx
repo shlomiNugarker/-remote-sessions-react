@@ -3,10 +3,11 @@ import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
 import { useParams } from 'react-router-dom'
 import { codeBlockService } from '../services/codeBlockService'
+import { ICodeBlock } from '../interfaces/ICodeBlock'
 
 export default function CodeBlockPage() {
   let { id } = useParams()
-  const [codeBlock, setCodeBlock] = useState<any>(null)
+  const [codeBlock, setCodeBlock] = useState<ICodeBlock | null>(null)
 
   const loadCode = useCallback(async () => {
     if (!id) return

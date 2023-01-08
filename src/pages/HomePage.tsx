@@ -1,14 +1,16 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { codeBlockService } from '../services/codeBlockService'
+import { ICodeBlock } from '../interfaces/ICodeBlock'
 
 export default function Home() {
   const navigate = useNavigate()
+  const [codeBlocks, setCodeBlocks] = useState<ICodeBlock[] | null>(null)
 
   const loadCodeBlocks = async () => {
     try {
       const codeBlocks = await codeBlockService.query()
-      console.log(codeBlocks)
+      setCodeBlocks(codeBlocks)
     } catch (err) {
       console.log(err)
     }
@@ -21,9 +23,14 @@ export default function Home() {
     <section className="home-page">
       <h1>Choose code block:</h1>
 
-      <button onClick={() => navigate('/63bad5e179ba21f8d6dbb475')}>
-        code id: 63bad5e179ba21f8d6dbb475
-      </button>
+      {codeBlocks?.map((codeBlock: any) => (
+        <button
+          key={codeBlock._id}
+          onClick={() => navigate(`/${codeBlock._id}`)}
+        >
+          code id: {codeBlock._id}
+        </button>
+      ))}
     </section>
   )
 }

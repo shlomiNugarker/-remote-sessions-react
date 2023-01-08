@@ -9,19 +9,19 @@ export const codeBlockService = {
 }
 
 async function query(): Promise<ICodeBlock[]> {
-  return await httpService.get(`code`)
+  return await httpService.get(`codeBlock`)
 }
 
 async function getById(id: string): Promise<ICodeBlock> {
-  return await httpService.get(`code/${id}`)
+  return await httpService.get(`codeBlock/${id}`)
 }
 
-async function save(code: any): Promise<ICodeBlock> {
-  return code._id
-    ? await httpService.put(`code/${code._id}`, code)
-    : await httpService.post('code/', code)
+async function save(codeBlock: ICodeBlock): Promise<ICodeBlock> {
+  return codeBlock._id
+    ? await httpService.put(`codeBlock/${codeBlock._id}`, codeBlock)
+    : await httpService.post('codeBlock/', codeBlock)
 }
 
 async function remove(id: string): Promise<ICodeBlock> {
-  return await httpService.delete(`code/${id}`)
+  return await httpService.delete(`codeBlock/${id}`)
 }

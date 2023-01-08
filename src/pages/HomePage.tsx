@@ -12,6 +12,7 @@ export default function Home() {
       const codeBlocks = await codeBlockService.query()
       setCodeBlocks(codeBlocks)
     } catch (err) {
+      alert("can't load code blocks...")
       console.log(err)
     }
   }
@@ -19,18 +20,23 @@ export default function Home() {
   useEffect(() => {
     loadCodeBlocks()
   }, [])
+
+  if (!codeBlocks) return <div className="home-page">Loading...</div>
+
   return (
     <section className="home-page">
       <h1>Choose code block:</h1>
 
-      {codeBlocks?.map((codeBlock: any) => (
-        <button
-          key={codeBlock._id}
-          onClick={() => navigate(`/${codeBlock._id}`)}
-        >
-          code id: {codeBlock._id}
-        </button>
-      ))}
+      <div className="codeBlocks">
+        {codeBlocks.map((codeBlock: any) => (
+          <button
+            key={codeBlock._id}
+            onClick={() => navigate(`/${codeBlock._id}`)}
+          >
+            {codeBlock.title}
+          </button>
+        ))}
+      </div>
     </section>
   )
 }

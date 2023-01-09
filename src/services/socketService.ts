@@ -4,10 +4,11 @@ import io, { Socket } from 'socket.io-client'
 const baseUrl = process.env.NODE_ENV === 'production' ? '' : '//localhost:3030'
 export const socketService = createSocketService()
 
+export let socket: Socket<DefaultEventsMap, DefaultEventsMap> | null = null
+
 socketService.setup()
 
 function createSocketService() {
-  let socket: Socket<DefaultEventsMap, DefaultEventsMap> | null = null
   const socketService = {
     async setup() {
       socket = io(baseUrl)

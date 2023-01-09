@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { codeBlockService } from '../services/codeBlockService'
-import { socketService } from '../services/socketService'
+import { socketService, socket } from '../services/socketService'
 
 import AceEditor from 'react-ace'
 import 'ace-builds/webpack-resolver'
@@ -21,6 +21,14 @@ export default function CodeBlockPage() {
   const [codeBlock, setCodeBlock] = useState<ICodeBlock | null>(null)
   const debouncedValue = useDebounce<ICodeBlock | null>(codeBlock, 2000)
   const [watchers, setWatchers] = useState<string[] | null>(null)
+  const [isMentor, setIsMentor] = useState(true)
+
+  useEffect(() => {
+    // always the first user in watcher list is the mentor:
+    if (!socket || !watchers) return
+    const isMentor = socket.id === watchers[0]
+    setIsMentor(isMentor)
+  }, [watchers])
 
   const loadCode = useCallback(async () => {
     if (!params.id) return
@@ -59,7 +67,7 @@ export default function CodeBlockPage() {
       if (isCodeBlockChanged) setCodeBlock(codeBlockFromSocket)
     })
     if (codeBlock?._id) {
-      socketService.emit('someone-enter-code-block', codeBlock._id)
+      // socketService.emit('someone-enter-code-block', codeBlock._id)
       socketService.on(
         'update-watchers-on-specific-code-block',
         (watchersOnCodeBlock: string[]) => {
@@ -70,12 +78,18 @@ export default function CodeBlockPage() {
     return () => {
       socketService.off('update-code-block')
       socketService.off('update-watchers-on-code-block')
+    }
+  }, [codeBlock])
 
+  useEffect(() => {
+    if (codeBlock?._id)
+      socketService.emit('someone-enter-code-block', codeBlock._id)
+    return () => {
       if (codeBlock?._id) {
         socketService.emit('someone-left-code-block', codeBlock._id)
       }
     }
-  }, [codeBlock])
+  }, [codeBlock?._id])
 
   if (!codeBlock) return <p className="code-block-page">Loading...</p>
   return (
@@ -97,13 +111,20 @@ export default function CodeBlockPage() {
               onChange={(ev) =>
                 setCodeBlock(
                   (prevVal) =>
-                    ({ ...prevVal, title: ev.target.value } as ICodeBlock)
+                    ({
+                      ...prevVal,
+                      title: isMentor ? codeBlock.title : ev.target.value,
+                    } as ICodeBlock)
                 )
               }
             />
           </p>
         )}
         <p>{watchers?.length || 0} Waching on this code now</p>
+        <p>You are a {isMentor ? 'mentor' : 'student'}</p>
+        <p>My socket id: {socket?.id}</p>
+        <p>{JSON.stringify(watchers, null, 2)}</p>
+        <br />
         <AceEditor
           placeholder=""
           mode="javascript"
@@ -111,11 +132,15 @@ export default function CodeBlockPage() {
           fontSize={16}
           showPrintMargin={true}
           showGutter={true}
-          onChange={(newValue) =>
+          onChange={(newValue) => {
             setCodeBlock(
-              (prevVal) => ({ ...prevVal, code: newValue } as ICodeBlock)
+              (prevVal) =>
+                ({
+                  ...prevVal,
+                  code: isMentor ? codeBlock.code : newValue,
+                } as ICodeBlock)
             )
-          }
+          }}
           name="text-area-block-code"
           value={codeBlock.code}
           editorProps={{ $blockScrolling: true }}

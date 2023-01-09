@@ -9,6 +9,7 @@ import 'ace-builds/webpack-resolver'
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/theme-monokai'
 import 'ace-builds/src-noconflict/ext-language_tools'
+import 'ace-builds/src-noconflict/ace'
 
 import useDebounce from '../hooks/useDebounce'
 import { useEffectUpdate } from '../hooks/useEffectUpdate'

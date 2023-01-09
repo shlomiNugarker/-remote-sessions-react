@@ -12,7 +12,7 @@ export default function Home() {
       const codeBlocks = await codeBlockService.query()
       setCodeBlocks(codeBlocks)
     } catch (err) {
-      alert("can't load code blocks...")
+      alert("couldn't load code blocks...")
       console.log(err)
     }
   }
@@ -28,7 +28,7 @@ export default function Home() {
       <h1>Choose code block:</h1>
 
       <div className="codeBlocks">
-        {codeBlocks.map((codeBlock: any) => (
+        {codeBlocks.map((codeBlock: ICodeBlock) => (
           <button
             key={codeBlock._id}
             onClick={() => navigate(`/${codeBlock._id}`)}

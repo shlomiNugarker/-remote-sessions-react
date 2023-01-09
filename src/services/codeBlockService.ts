@@ -1,5 +1,6 @@
 import { ICodeBlock } from '../interfaces/ICodeBlock'
 import { httpService } from './httpService'
+import { socketService } from './socketService'
 
 export const codeBlockService = {
   getById,
@@ -17,9 +18,13 @@ async function getById(id: string): Promise<ICodeBlock> {
 }
 
 async function save(codeBlock: ICodeBlock): Promise<ICodeBlock> {
-  return codeBlock._id
+  const savedCodeBlock = codeBlock._id
     ? await httpService.put(`codeBlock/${codeBlock._id}`, codeBlock)
     : await httpService.post('codeBlock/', codeBlock)
+
+  socketService.emit('code-block-saved', savedCodeBlock)
+
+  return savedCodeBlock
 }
 
 async function remove(id: string): Promise<ICodeBlock> {

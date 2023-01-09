@@ -5,6 +5,7 @@ import { ICodeBlock } from '../interfaces/ICodeBlock'
 
 export default function Home() {
   const navigate = useNavigate()
+
   const [codeBlocks, setCodeBlocks] = useState<ICodeBlock[] | null>(null)
 
   const loadCodeBlocks = async () => {

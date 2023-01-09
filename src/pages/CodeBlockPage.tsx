@@ -15,27 +15,26 @@ import { useEffectUpdate } from '../hooks/useEffectUpdate'
 import { socketService } from '../services/socketService'
 
 export default function CodeBlockPage() {
-  const { id } = useParams()
+  const params = useParams()
 
   const [isEditTitle, setIsEditTitle] = useState(false)
   const [codeBlock, setCodeBlock] = useState<ICodeBlock | null>(null)
   const debouncedValue = useDebounce<ICodeBlock | null>(codeBlock, 2000)
 
   const loadCode = useCallback(async () => {
-    if (!id) return
+    if (!params.id) return
     try {
-      const code = await codeBlockService.getById(id)
+      const code = await codeBlockService.getById(params.id)
       setCodeBlock(code)
     } catch (err) {
       console.log(err)
       alert("couldn't find code-block")
     }
-  }, [id])
+  }, [params.id])
 
   const saveCodeBlock = async () => {
     try {
       if (!codeBlock) return
-      console.log('save')
       await codeBlockService.save(codeBlock)
     } catch (err) {
       console.log(err)
@@ -47,10 +46,14 @@ export default function CodeBlockPage() {
     socketService.on('update-code-block', (codeBlock: ICodeBlock) => {
       console.log(codeBlock)
     })
+    if (codeBlock?._id) {
+      console.log('user connected')
+      socketService.emit('someone-enter-code-block', codeBlock._id)
+    }
     return () => {
       socketService.off('update-code-block')
     }
-  }, [])
+  }, [codeBlock?._id])
 
   useEffectUpdate(() => {
     saveCodeBlock()
@@ -59,6 +62,15 @@ export default function CodeBlockPage() {
   useEffect(() => {
     loadCode()
   }, [loadCode])
+
+  useEffect(() => {
+    return () => {
+      if (codeBlock?._id) {
+        console.log('user disconnect')
+        socketService.emit('someone-leave-code-block', codeBlock._id)
+      }
+    }
+  }, [codeBlock?._id])
 
   if (!codeBlock) return <p className="code-block-page">Loading...</p>
   return (

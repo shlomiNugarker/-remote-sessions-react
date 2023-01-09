@@ -1,6 +1,5 @@
 import { ICodeBlock } from '../interfaces/ICodeBlock'
 import { httpService } from './httpService'
-// import { socketService } from './socketService'
 
 export const codeBlockService = {
   getById,

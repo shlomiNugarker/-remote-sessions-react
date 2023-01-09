@@ -13,8 +13,8 @@ export default function Home() {
       const codeBlocks = await codeBlockService.query()
       setCodeBlocks(codeBlocks)
     } catch (err) {
+      // console.log(err)
       alert("couldn't load code blocks...")
-      console.log(err)
     }
   }
 

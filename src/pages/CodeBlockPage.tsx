@@ -58,10 +58,8 @@ export default function CodeBlockPage() {
 
       if (isCodeBlockChanged) setCodeBlock(codeBlockFromSocket)
     })
-
     if (codeBlock?._id) {
       socketService.emit('someone-enter-code-block', codeBlock._id)
-
       socketService.on(
         'update-watchers-on-specific-code-block',
         (watchersOnCodeBlock: string[]) => {
@@ -69,7 +67,6 @@ export default function CodeBlockPage() {
         }
       )
     }
-
     return () => {
       socketService.off('update-code-block')
       socketService.off('update-watchers-on-code-block')

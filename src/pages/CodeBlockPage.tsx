@@ -35,7 +35,8 @@ export default function CodeBlockPage() {
   const saveCodeBlock = async () => {
     try {
       if (!codeBlock) return
-      await codeBlockService.save(codeBlock)
+      const savedCodeBlock = await codeBlockService.save(codeBlock)
+      socketService.emit('code-block-saved', savedCodeBlock)
     } catch (err) {
       console.log(err)
       alert("couldn't save code-block")
@@ -43,15 +44,27 @@ export default function CodeBlockPage() {
   }
 
   useEffect(() => {
-    socketService.on('update-code-block', (codeBlock: ICodeBlock) => {
-      console.log(codeBlock)
+    socketService.on('update-code-block', (codeBlockFromSocket: ICodeBlock) => {
+      if (
+        codeBlockFromSocket.code !== codeBlock?.code ||
+        codeBlockFromSocket.title !== codeBlock?.title
+      )
+        setCodeBlock(codeBlockFromSocket)
     })
+
+    return () => {
+      socketService.off('update-code-block')
+    }
+  }, [codeBlock])
+
+  useEffect(() => {
     if (codeBlock?._id) {
-      console.log('user connected')
       socketService.emit('someone-enter-code-block', codeBlock._id)
     }
     return () => {
-      socketService.off('update-code-block')
+      if (codeBlock?._id) {
+        socketService.emit('someone-leave-code-block', codeBlock._id)
+      }
     }
   }, [codeBlock?._id])
 
@@ -62,15 +75,6 @@ export default function CodeBlockPage() {
   useEffect(() => {
     loadCode()
   }, [loadCode])
-
-  useEffect(() => {
-    return () => {
-      if (codeBlock?._id) {
-        console.log('user disconnect')
-        socketService.emit('someone-leave-code-block', codeBlock._id)
-      }
-    }
-  }, [codeBlock?._id])
 
   if (!codeBlock) return <p className="code-block-page">Loading...</p>
   return (

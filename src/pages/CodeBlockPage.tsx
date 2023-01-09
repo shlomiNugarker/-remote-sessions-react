@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { codeBlockService } from '../services/codeBlockService'
-import { ICodeBlock } from '../interfaces/ICodeBlock'
+import { socketService } from '../services/socketService'
 
 import AceEditor from 'react-ace'
 import 'ace-builds/webpack-resolver'
@@ -12,14 +12,15 @@ import 'ace-builds/src-noconflict/ext-language_tools'
 
 import useDebounce from '../hooks/useDebounce'
 import { useEffectUpdate } from '../hooks/useEffectUpdate'
-import { socketService } from '../services/socketService'
+
+import { ICodeBlock } from '../interfaces/ICodeBlock'
 
 export default function CodeBlockPage() {
   const params = useParams()
-
   const [isEditTitle, setIsEditTitle] = useState(false)
   const [codeBlock, setCodeBlock] = useState<ICodeBlock | null>(null)
   const debouncedValue = useDebounce<ICodeBlock | null>(codeBlock, 2000)
+  const [watchers, setWatchers] = useState<string[] | null>(null)
 
   const loadCode = useCallback(async () => {
     if (!params.id) return
@@ -27,10 +28,13 @@ export default function CodeBlockPage() {
       const code = await codeBlockService.getById(params.id)
       setCodeBlock(code)
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       alert("couldn't find code-block")
     }
   }, [params.id])
+  useEffect(() => {
+    loadCode()
+  }, [loadCode])
 
   const saveCodeBlock = async () => {
     try {
@@ -38,43 +42,43 @@ export default function CodeBlockPage() {
       const savedCodeBlock = await codeBlockService.save(codeBlock)
       socketService.emit('code-block-saved', savedCodeBlock)
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       alert("couldn't save code-block")
     }
   }
-
-  useEffect(() => {
-    socketService.on('update-code-block', (codeBlockFromSocket: ICodeBlock) => {
-      if (
-        codeBlockFromSocket.code !== codeBlock?.code ||
-        codeBlockFromSocket.title !== codeBlock?.title
-      )
-        setCodeBlock(codeBlockFromSocket)
-    })
-
-    return () => {
-      socketService.off('update-code-block')
-    }
-  }, [codeBlock])
-
-  useEffect(() => {
-    if (codeBlock?._id) {
-      socketService.emit('someone-enter-code-block', codeBlock._id)
-    }
-    return () => {
-      if (codeBlock?._id) {
-        socketService.emit('someone-leave-code-block', codeBlock._id)
-      }
-    }
-  }, [codeBlock?._id])
-
   useEffectUpdate(() => {
     saveCodeBlock()
   }, [debouncedValue])
 
   useEffect(() => {
-    loadCode()
-  }, [loadCode])
+    socketService.on('update-code-block', (codeBlockFromSocket: ICodeBlock) => {
+      const isCodeBlockChanged =
+        codeBlockFromSocket.code !== codeBlock?.code ||
+        codeBlockFromSocket.title !== codeBlock?.title
+
+      if (isCodeBlockChanged) setCodeBlock(codeBlockFromSocket)
+    })
+
+    if (codeBlock?._id) {
+      socketService.emit('someone-enter-code-block', codeBlock._id)
+
+      socketService.on(
+        'update-watchers-on-specific-code-block',
+        (watchersOnCodeBlock: string[]) => {
+          setWatchers(watchersOnCodeBlock)
+        }
+      )
+    }
+
+    return () => {
+      socketService.off('update-code-block')
+      socketService.off('update-watchers-on-code-block')
+
+      if (codeBlock?._id) {
+        socketService.emit('someone-left-code-block', codeBlock._id)
+      }
+    }
+  }, [codeBlock])
 
   if (!codeBlock) return <p className="code-block-page">Loading...</p>
   return (
@@ -85,7 +89,6 @@ export default function CodeBlockPage() {
             {codeBlock.title}
           </p>
         )}
-
         {isEditTitle && (
           <p>
             <input
@@ -103,7 +106,7 @@ export default function CodeBlockPage() {
             />
           </p>
         )}
-
+        <p>{watchers?.length || 0} Waching on this code now</p>
         <AceEditor
           placeholder=""
           mode="javascript"
@@ -124,7 +127,7 @@ export default function CodeBlockPage() {
             enableLiveAutocompletion: true,
             enableSnippets: true,
             showLineNumbers: true,
-            tabSize: 2,
+            tabSize: 1,
             useWorker: false,
           }}
         />

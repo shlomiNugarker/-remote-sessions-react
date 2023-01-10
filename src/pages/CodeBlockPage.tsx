@@ -41,8 +41,9 @@ export default function CodeBlockPage() {
       setCodeBlock(code)
     } catch (err) {
       alert("couldn't find code-block")
+      navigate('/')
     }
-  }, [params.id])
+  }, [navigate, params.id])
   useEffect(() => {
     loadCode()
   }, [loadCode])
@@ -73,14 +74,15 @@ export default function CodeBlockPage() {
   }, [debouncedValue])
 
   useEffect(() => {
+    if (!codeBlock) return
     socketService.on('update-code-block', (codeBlockFromSocket: ICodeBlock) => {
       const isCodeBlockChanged =
-        codeBlockFromSocket.code !== codeBlock?.code ||
-        codeBlockFromSocket.title !== codeBlock?.title
+        codeBlockFromSocket.code !== codeBlock.code ||
+        codeBlockFromSocket.title !== codeBlock.title
 
       if (isCodeBlockChanged) setCodeBlock(codeBlockFromSocket)
     })
-    if (codeBlock?._id) {
+    if (codeBlock._id) {
       socketService.on(
         'update-watchers-on-specific-code-block',
         (watchersOnCodeBlock: string[]) => {
@@ -104,7 +106,8 @@ export default function CodeBlockPage() {
     }
   }, [codeBlock?._id])
 
-  if (!codeBlock) return <p className="code-block-page">Loading...</p>
+  if (!codeBlock) return <p className="code-block-page loading">Loading...</p>
+
   return (
     <div className="code-block-page">
       <button className="back-btn" onClick={() => navigate('/')}>
@@ -142,8 +145,6 @@ export default function CodeBlockPage() {
           You are a{' '}
           <span className="underline">{isMentor ? 'mentor' : 'student'}</span>{' '}
         </p>
-        {/* <p>My socket id: {socket?.id}</p> */}
-        {/* <p>{JSON.stringify(watchers, null, 2)}</p> */}
         <p className="emoji">
           {codeBlock.solution ? (isCorrect ? '🙂' : '😐') : null}
         </p>
@@ -155,12 +156,14 @@ export default function CodeBlockPage() {
           fontSize={16}
           showPrintMargin={true}
           showGutter={true}
+          readOnly={isMentor}
+          wrapEnabled={true}
           onChange={(newValue) => {
             setCodeBlock(
               (prevVal) =>
                 ({
                   ...prevVal,
-                  code: isMentor ? codeBlock.code : newValue,
+                  code: newValue,
                 } as ICodeBlock)
             )
           }}

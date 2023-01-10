@@ -28,7 +28,7 @@ export default function Home() {
     <section className="home-page">
       <h1>Choose code block:</h1>
 
-      <div className="codeBlocks">
+      <div className="code-blocks">
         {codeBlocks.map((codeBlock: ICodeBlock) => (
           <button
             key={codeBlock._id}

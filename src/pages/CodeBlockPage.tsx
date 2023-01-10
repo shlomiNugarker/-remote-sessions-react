@@ -30,12 +30,13 @@ export default function CodeBlockPage() {
   const [isCorrect, setIsCorrect] = useState(false)
 
   useEffect(() => {
-    // always the first user in watchers list is the mentor:
+    // Always the first user in watchers list is the mentor:
     if (!socket || !watchers) return
     const isMentor = socket.id === watchers[0]
     setIsMentor(isMentor)
   }, [watchers])
 
+  // Loading specific codeBlock with id:
   const loadCode = useCallback(async () => {
     if (!params.id) return
     try {
@@ -50,6 +51,7 @@ export default function CodeBlockPage() {
     loadCode()
   }, [loadCode])
 
+  // Check if the code is correct:
   const checkSolution = () => {
     if (
       codeBlock &&
@@ -61,6 +63,7 @@ export default function CodeBlockPage() {
     } else isCorrect && setIsCorrect(false)
   }
 
+  // Save the code after debouncedValue changed:
   const saveCodeBlock = async () => {
     try {
       if (!codeBlock || isMentor) return
@@ -75,6 +78,7 @@ export default function CodeBlockPage() {
     saveCodeBlock()
   }, [debouncedValue])
 
+  // Handle sockets:
   useEffect(() => {
     if (!codeBlock) return
     socketService.on('update-code-block', (codeBlockFromSocket: ICodeBlock) => {
@@ -108,10 +112,11 @@ export default function CodeBlockPage() {
     }
   }, [codeBlock?._id])
 
+  // Loading:
   if (!codeBlock)
     return (
       <p className="code-block-page loading">
-        <img className="loading-gif" src={loadingGif} alt="" />
+        <img className="loading-gif" src={loadingGif} alt="loading" />
       </p>
     )
 
@@ -120,6 +125,8 @@ export default function CodeBlockPage() {
       <button className="back-btn" onClick={() => navigate('/')}>
         Back
       </button>
+
+      {/* Title - input or regular title: */}
       <div className="code-block-edit">
         {!isEditTitle && (
           <p className="title" onClick={() => setIsEditTitle(true)}>
@@ -147,6 +154,7 @@ export default function CodeBlockPage() {
           </p>
         )}
 
+        {/* More details */}
         <p>{watchers?.length || 0} people are viewing this code</p>
         <p>
           You are a{' '}
@@ -165,6 +173,7 @@ export default function CodeBlockPage() {
           )
         ) : null}
 
+        {/* Editor: */}
         <AceEditor
           placeholder=""
           mode="typescript"

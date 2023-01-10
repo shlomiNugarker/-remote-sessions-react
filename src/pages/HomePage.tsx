@@ -1,12 +1,11 @@
 import { useNavigate } from 'react-router-dom'
-import { ICodeBlock } from '../interfaces/ICodeBlock'
 
 import loadingGif from '../assets/imgs/loading.gif'
 
 export default function Home({
   codeBlocksIds,
 }: {
-  codeBlocksIds: ICodeBlock[] | null
+  codeBlocksIds: { _id: string; title: string }[] | null
 }) {
   const navigate = useNavigate()
   if (!codeBlocksIds)
@@ -24,7 +23,7 @@ export default function Home({
       <h1>Choose code block:</h1>
 
       <div className="code-blocks">
-        {codeBlocksIds.map((codeBlock: ICodeBlock) => (
+        {codeBlocksIds.map((codeBlock) => (
           <button
             key={codeBlock._id}
             onClick={() => navigate(`/${codeBlock._id}`)}

@@ -8,9 +8,11 @@ import { ICodeBlock } from './interfaces/ICodeBlock'
 import { useEffect, useState } from 'react'
 
 export default function App() {
-  const [codeBlocksIds, setCodeBlocks] = useState<ICodeBlock[] | null>(null)
+  const [codeBlocksIds, setCodeBlocks] = useState<
+    { _id: string; title: string }[] | null
+  >(null)
 
-  const loadCodeBlocks = async () => {
+  const loadCodeBlocksIds = async () => {
     try {
       const codeBlocks = await codeBlockService.queryIds()
       setCodeBlocks(codeBlocks)
@@ -21,7 +23,7 @@ export default function App() {
   }
 
   useEffect(() => {
-    loadCodeBlocks()
+    loadCodeBlocksIds()
   }, [])
   return (
     <div className="App">

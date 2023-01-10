@@ -4,11 +4,11 @@ import { httpService } from './httpService'
 export const codeBlockService = {
   getById,
   save,
-  // remove,
+
   queryIds,
 }
 
-async function queryIds(): Promise<ICodeBlock[]> {
+async function queryIds(): Promise<{ _id: string; title: string }[]> {
   return await httpService.get(`codeBlock`)
 }
 
@@ -23,7 +23,3 @@ async function save(codeBlock: ICodeBlock): Promise<ICodeBlock> {
 
   return savedCodeBlock
 }
-
-// async function remove(id: string): Promise<ICodeBlock> {
-//   return await httpService.delete(`codeBlock/${id}`)
-// }

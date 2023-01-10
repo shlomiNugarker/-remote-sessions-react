@@ -7,7 +7,6 @@ import loadingGif from '../assets/imgs/loading.gif'
 
 export default function Home() {
   const navigate = useNavigate()
-
   const [codeBlocksIds, setCodeBlocks] = useState<ICodeBlock[] | null>(null)
 
   const loadCodeBlocks = async () => {
@@ -32,7 +31,7 @@ export default function Home() {
     )
 
   if (!codeBlocksIds.length)
-    return <div className="home-page">No block codes yet. 🙂</div>
+    return <div className="home-page">No block codes yet... 🙂</div>
 
   return (
     <section className="home-page">

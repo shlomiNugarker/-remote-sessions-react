@@ -1,28 +1,14 @@
-import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { codeBlockService } from '../services/codeBlockService'
 import { ICodeBlock } from '../interfaces/ICodeBlock'
 
 import loadingGif from '../assets/imgs/loading.gif'
 
-export default function Home() {
+export default function Home({
+  codeBlocksIds,
+}: {
+  codeBlocksIds: ICodeBlock[] | null
+}) {
   const navigate = useNavigate()
-  const [codeBlocksIds, setCodeBlocks] = useState<ICodeBlock[] | null>(null)
-
-  const loadCodeBlocks = async () => {
-    try {
-      const codeBlocks = await codeBlockService.queryIds()
-      setCodeBlocks(codeBlocks)
-    } catch (err) {
-      alert("couldn't load code blocks...")
-      setCodeBlocks([])
-    }
-  }
-
-  useEffect(() => {
-    loadCodeBlocks()
-  }, [])
-
   if (!codeBlocksIds)
     return (
       <div className="home-page">

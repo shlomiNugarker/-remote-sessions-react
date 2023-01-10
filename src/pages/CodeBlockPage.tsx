@@ -17,6 +17,8 @@ import { useEffectUpdate } from '../hooks/useEffectUpdate'
 
 import { ICodeBlock } from '../interfaces/ICodeBlock'
 
+import loadingGif from '../assets/imgs/loading.gif'
+
 export default function CodeBlockPage() {
   const params = useParams()
   const navigate = useNavigate()
@@ -106,7 +108,12 @@ export default function CodeBlockPage() {
     }
   }, [codeBlock?._id])
 
-  if (!codeBlock) return <p className="code-block-page loading">Loading...</p>
+  if (!codeBlock)
+    return (
+      <p className="code-block-page loading">
+        <img className="loading-gif" src={loadingGif} alt="" />
+      </p>
+    )
 
   return (
     <div className="code-block-page">
@@ -145,9 +152,18 @@ export default function CodeBlockPage() {
           You are a{' '}
           <span className="underline">{isMentor ? 'mentor' : 'student'}</span>{' '}
         </p>
-        <p className="emoji">
-          {codeBlock.solution ? (isCorrect ? '🙂' : '😐') : null}
-        </p>
+
+        {codeBlock.solution ? (
+          isCorrect ? (
+            <p className="emoji">
+              🙂<span>looks good</span>
+            </p>
+          ) : (
+            <p className="emoji">
+              😐<span>fix the code</span>
+            </p>
+          )
+        ) : null}
 
         <AceEditor
           placeholder=""

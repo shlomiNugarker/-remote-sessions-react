@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import { codeBlockService } from '../services/codeBlockService'
 import { socketService, socket } from '../services/socketService'
@@ -7,6 +7,7 @@ import { socketService, socket } from '../services/socketService'
 import AceEditor from 'react-ace'
 import 'ace-builds/webpack-resolver'
 import 'ace-builds/src-noconflict/mode-javascript'
+import 'ace-builds/src-noconflict/mode-typescript'
 import 'ace-builds/src-noconflict/theme-monokai'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import 'ace-builds/src-noconflict/ace'
@@ -18,14 +19,16 @@ import { ICodeBlock } from '../interfaces/ICodeBlock'
 
 export default function CodeBlockPage() {
   const params = useParams()
+  const navigate = useNavigate()
   const [isEditTitle, setIsEditTitle] = useState(false)
   const [codeBlock, setCodeBlock] = useState<ICodeBlock | null>(null)
   const debouncedValue = useDebounce<ICodeBlock | null>(codeBlock, 2000)
   const [watchers, setWatchers] = useState<string[] | null>(null)
   const [isMentor, setIsMentor] = useState(true)
+  const [isCorrect, setIsCorrect] = useState(false)
 
   useEffect(() => {
-    // always the first user in watcher list is the mentor:
+    // always the first user in watchers list is the mentor:
     if (!socket || !watchers) return
     const isMentor = socket.id === watchers[0]
     setIsMentor(isMentor)
@@ -37,7 +40,6 @@ export default function CodeBlockPage() {
       const code = await codeBlockService.getById(params.id)
       setCodeBlock(code)
     } catch (err) {
-      // console.log(err)
       alert("couldn't find code-block")
     }
   }, [params.id])
@@ -45,17 +47,28 @@ export default function CodeBlockPage() {
     loadCode()
   }, [loadCode])
 
+  const checkSolution = () => {
+    if (
+      codeBlock &&
+      codeBlock.solution &&
+      !isCorrect &&
+      codeBlock.code.trim() === codeBlock.solution.trim()
+    ) {
+      setIsCorrect(true)
+    } else isCorrect && setIsCorrect(false)
+  }
+
   const saveCodeBlock = async () => {
     try {
-      if (!codeBlock) return
+      if (!codeBlock || isMentor) return
       const savedCodeBlock = await codeBlockService.save(codeBlock)
       socketService.emit('code-block-saved', savedCodeBlock)
     } catch (err) {
-      // console.log(err)
       alert("couldn't save code-block")
     }
   }
   useEffectUpdate(() => {
+    checkSolution()
     saveCodeBlock()
   }, [debouncedValue])
 
@@ -68,7 +81,6 @@ export default function CodeBlockPage() {
       if (isCodeBlockChanged) setCodeBlock(codeBlockFromSocket)
     })
     if (codeBlock?._id) {
-      // socketService.emit('someone-enter-code-block', codeBlock._id)
       socketService.on(
         'update-watchers-on-specific-code-block',
         (watchersOnCodeBlock: string[]) => {
@@ -95,6 +107,9 @@ export default function CodeBlockPage() {
   if (!codeBlock) return <p className="code-block-page">Loading...</p>
   return (
     <div className="code-block-page">
+      <button className="back-btn" onClick={() => navigate('/')}>
+        Back
+      </button>
       <div className="code-block-edit">
         {!isEditTitle && (
           <p className="title" onClick={() => setIsEditTitle(true)}>
@@ -121,14 +136,21 @@ export default function CodeBlockPage() {
             />
           </p>
         )}
-        <p>{watchers?.length || 0} Waching on this code now</p>
-        <p>You are a {isMentor ? 'mentor' : 'student'}</p>
-        <p>My socket id: {socket?.id}</p>
-        <p>{JSON.stringify(watchers, null, 2)}</p>
-        <br />
+
+        <p>{watchers?.length || 0} people are viewing this code</p>
+        <p>
+          You are a{' '}
+          <span className="underline">{isMentor ? 'mentor' : 'student'}</span>{' '}
+        </p>
+        {/* <p>My socket id: {socket?.id}</p> */}
+        {/* <p>{JSON.stringify(watchers, null, 2)}</p> */}
+        <p className="emoji">
+          {codeBlock.solution ? (isCorrect ? '🙂' : '😐') : null}
+        </p>
+
         <AceEditor
           placeholder=""
-          mode="javascript"
+          mode="typescript"
           theme="monokai"
           fontSize={16}
           showPrintMargin={true}

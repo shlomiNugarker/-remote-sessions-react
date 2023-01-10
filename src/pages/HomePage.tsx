@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import { codeBlockService } from '../services/codeBlockService'
 import { ICodeBlock } from '../interfaces/ICodeBlock'
 
+import loadingGif from '../assets/imgs/loading.gif'
+
 export default function Home() {
   const navigate = useNavigate()
 
@@ -22,7 +24,13 @@ export default function Home() {
     loadCodeBlocks()
   }, [])
 
-  if (!codeBlocksIds) return <div className="home-page">Loading...</div>
+  if (!codeBlocksIds)
+    return (
+      <div className="home-page">
+        <img className="loading-gif" src={loadingGif} alt="" />
+      </div>
+    )
+
   if (!codeBlocksIds.length)
     return <div className="home-page">No block codes yet. 🙂</div>
 

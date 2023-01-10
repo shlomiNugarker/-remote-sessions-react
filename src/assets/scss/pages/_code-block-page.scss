@@ -7,6 +7,10 @@
   justify-content: center;
   align-items: flex-start;
 
+  &.loading {
+    align-items: center;
+  }
+
   .back-btn {
     position: absolute;
     left: 5px;
@@ -62,5 +66,8 @@
   }
 }
 
-@media (max-width: 660px) {
+@media (max-width: 860px) {
+  .code-block-page {
+    padding: 55px 10px;
+  }
 }

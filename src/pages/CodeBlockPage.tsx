@@ -24,7 +24,7 @@ export default function CodeBlockPage() {
   const navigate = useNavigate()
   const [isEditTitle, setIsEditTitle] = useState(false)
   const [codeBlock, setCodeBlock] = useState<ICodeBlock | null>(null)
-  const debouncedValue = useDebounce<ICodeBlock | null>(codeBlock, 2000)
+  const debouncedValue = useDebounce<ICodeBlock | null>(codeBlock, 200)
   const [watchers, setWatchers] = useState<string[] | null>(null)
   const [isMentor, setIsMentor] = useState(true)
   const [isCorrect, setIsCorrect] = useState(false)
@@ -81,6 +81,8 @@ export default function CodeBlockPage() {
   // Handle sockets:
   useEffect(() => {
     if (!codeBlock) return
+
+    // if someone updated the code:
     socketService.on('update-code-block', (codeBlockFromSocket: ICodeBlock) => {
       const isCodeBlockChanged =
         codeBlockFromSocket.code !== codeBlock.code ||
@@ -88,6 +90,8 @@ export default function CodeBlockPage() {
 
       if (isCodeBlockChanged) setCodeBlock(codeBlockFromSocket)
     })
+
+    // when someone enter/ exit this page:
     if (codeBlock._id) {
       socketService.on(
         'update-watchers-on-specific-code-block',
@@ -104,9 +108,11 @@ export default function CodeBlockPage() {
 
   useEffect(() => {
     if (codeBlock?._id)
+      // when the user enter the page:
       socketService.emit('someone-enter-code-block', codeBlock._id)
     return () => {
       if (codeBlock?._id) {
+        // when the user left the page:
         socketService.emit('someone-left-code-block', codeBlock._id)
       }
     }
@@ -126,7 +132,7 @@ export default function CodeBlockPage() {
         Back
       </button>
 
-      {/* Title - input or regular title: */}
+      {/* Title - input or paragraph: */}
       <div className="code-block-edit">
         {!isEditTitle && (
           <p className="title" onClick={() => setIsEditTitle(true)}>
@@ -154,7 +160,7 @@ export default function CodeBlockPage() {
           </p>
         )}
 
-        {/* More details */}
+        {/* More details: */}
         <p>{watchers?.length || 0} people are viewing this code</p>
         <p>
           You are a{' '}

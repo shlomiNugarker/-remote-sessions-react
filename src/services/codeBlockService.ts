@@ -4,7 +4,6 @@ import { httpService } from './httpService'
 export const codeBlockService = {
   getById,
   save,
-
   queryIds,
 }
 

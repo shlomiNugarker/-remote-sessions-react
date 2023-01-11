@@ -4,21 +4,20 @@ import HomePage from './pages/HomePage'
 import CodeBlockPage from './pages/CodeBlockPage'
 
 import { codeBlockService } from './services/codeBlockService'
-import { ICodeBlock } from './interfaces/ICodeBlock'
 import { useEffect, useState } from 'react'
 
 export default function App() {
-  const [codeBlocksIds, setCodeBlocks] = useState<
+  const [codeBlocksIds, setCodeBlocksIds] = useState<
     { _id: string; title: string }[] | null
   >(null)
 
   const loadCodeBlocksIds = async () => {
     try {
-      const codeBlocks = await codeBlockService.queryIds()
-      setCodeBlocks(codeBlocks)
+      const codeBlocksIds = await codeBlockService.queryIds()
+      setCodeBlocksIds(codeBlocksIds)
     } catch (err) {
       alert("couldn't load code blocks...")
-      setCodeBlocks([])
+      setCodeBlocksIds([])
     }
   }
 

@@ -28,6 +28,7 @@ export default function CodeBlockPage() {
   const [watchers, setWatchers] = useState<string[] | null>(null)
   const [isMentor, setIsMentor] = useState(true)
   const [isCorrect, setIsCorrect] = useState(false)
+  const [isUserTyped, setIsUserTyped] = useState(false)
 
   useEffect(() => {
     // Always the first user in watchers list is the mentor:
@@ -75,7 +76,7 @@ export default function CodeBlockPage() {
   }
   useEffectUpdate(() => {
     checkSolution()
-    saveCodeBlock()
+    if (debouncedValue && isUserTyped) saveCodeBlock()
   }, [debouncedValue])
 
   // Handle sockets:
@@ -190,6 +191,7 @@ export default function CodeBlockPage() {
           readOnly={isMentor}
           wrapEnabled={true}
           onChange={(newValue) => {
+            if (!isUserTyped) setIsUserTyped(true)
             setCodeBlock(
               (prevVal) =>
                 ({

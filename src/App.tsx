@@ -5,6 +5,7 @@ import CodeBlockPage from './pages/CodeBlockPage'
 
 import { codeBlockService } from './services/codeBlockService'
 import { useEffect, useState } from 'react'
+import SignIn from './pages/SignIn'
 
 export default function App() {
   const [codeBlocksIds, setCodeBlocksIds] = useState<
@@ -27,6 +28,7 @@ export default function App() {
   return (
     <div className="App">
       <Routes>
+        <Route path="/sign-in" element={<SignIn />} />
         <Route path="/:id" element={<CodeBlockPage />} />
         <Route path="/" element={<HomePage codeBlocksIds={codeBlocksIds} />} />
       </Routes>

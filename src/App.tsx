@@ -76,6 +76,7 @@ export default function App() {
                 codeBlocksIds={codeBlocksIds}
                 loggedUser={loggedUser}
                 loadCodeBlocksIds={loadCodeBlocksIds}
+                setLoggedUser={setLoggedUser}
               />
             </ProtectedRoute>
           }

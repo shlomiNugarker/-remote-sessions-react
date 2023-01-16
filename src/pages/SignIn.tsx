@@ -32,7 +32,6 @@ export default function SignIn({ setLoggedUser }: Props) {
       navigate('/')
       cleanFields()
     } catch (err) {
-      console.log(err)
       alert("couldn't sign in...")
     }
   }

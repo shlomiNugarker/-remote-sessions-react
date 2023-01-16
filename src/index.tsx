@@ -4,7 +4,7 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { HashRouter as Router } from 'react-router-dom'
 
-//react-ace (editor):
+// react-ace (editor):
 import 'ace-builds/webpack-resolver'
 import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/mode-typescript'

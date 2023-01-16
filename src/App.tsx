@@ -52,7 +52,11 @@ export default function App() {
 
         <Route
           path="/add-code-block"
-          element={<AddCodeBlockPage loadCodeBlocksIds={loadCodeBlocksIds} />}
+          element={
+            <ProtectedRoute path="/add-code-block">
+              <AddCodeBlockPage loadCodeBlocksIds={loadCodeBlocksIds} />
+            </ProtectedRoute>
+          }
         />
 
         <Route
@@ -67,7 +71,7 @@ export default function App() {
         <Route
           path="/"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute path="/">
               <HomePage
                 codeBlocksIds={codeBlocksIds}
                 loggedUser={loggedUser}
@@ -76,6 +80,8 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route path="*" element={<p>There's nothing here: 404!</p>} />
       </Routes>
     </div>
   )

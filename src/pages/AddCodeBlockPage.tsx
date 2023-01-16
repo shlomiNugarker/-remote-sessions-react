@@ -3,6 +3,7 @@ import AceEditor from 'react-ace'
 import { ICodeBlock } from '../interfaces/ICodeBlock'
 import { codeBlockService } from '../services/codeBlockService'
 import { useNavigate } from 'react-router-dom'
+import { authService } from '../services/authService'
 
 type Props = {
   loadCodeBlocksIds: () => Promise<void>
@@ -10,16 +11,20 @@ type Props = {
 
 export default function AddCodeBlockPage({ loadCodeBlocksIds }: Props) {
   const navigate = useNavigate()
+  // if (!loggedUser) return
+
   const [codeBlock, setCodeBlock] = useState<ICodeBlock | null>({
     code: "'use strict'",
     title: 'New code block',
     solution: '',
+    createdBy: '',
   })
 
   const addCodeBlock = async () => {
-    if (!codeBlock?.code || !codeBlock.title) return
+    const loggedUser = authService.getLoggedUser()
+    if (!codeBlock?.code || !codeBlock.title || !loggedUser) return
     try {
-      await codeBlockService.save(codeBlock)
+      await codeBlockService.save({ ...codeBlock, createdBy: loggedUser._id })
       loadCodeBlocksIds()
       navigate('/')
     } catch (err) {

@@ -3,9 +3,10 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   color: white;
+  padding-top: 150px;
 
   h1 {
     font-size: 30px;

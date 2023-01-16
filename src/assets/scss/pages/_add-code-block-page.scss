@@ -1,0 +1,71 @@
+.add-code-block-page {
+  background-color: #151515;
+  padding: 20px 10px;
+  min-height: 100vh;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .back-btn {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    margin: 7px;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    transition: all, 0.3s;
+
+    &:hover {
+      background-color: #464d88cc;
+      color: white;
+    }
+  }
+
+  .edit-input {
+    width: 100%;
+    border: none;
+    background: none;
+    color: white;
+    outline: none;
+    text-align: center;
+    font-size: 2rem;
+    margin: 0 0 9px 0;
+  }
+
+  #text-area-block-code {
+    width: 98vw !important;
+    height: 70vh !important;
+
+    .ace_print-margin {
+      background-color: unset;
+    }
+  }
+
+  .Add-code-block-btn {
+    background-color: rgb(85, 211, 112);
+    margin: 7px;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    transition: all, 0.3s;
+
+    &:hover {
+      color: white;
+      background-color: rgb(54, 129, 70);
+    }
+  }
+}
+@media (max-width: 860px) {
+  .add-code-block-page {
+    #text-area-block-code {
+      height: 65vh !important;
+
+      .ace_print-margin {
+        background-color: unset;
+      }
+    }
+  }
+}

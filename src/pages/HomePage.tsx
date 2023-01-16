@@ -8,14 +8,28 @@ type Props = {
   codeBlocksIds: { _id: string; title: string }[] | null
   loggedUser: IUser | null
   loadCodeBlocksIds: () => Promise<void>
+  setLoggedUser: React.Dispatch<React.SetStateAction<IUser | null>>
 }
 
 export default function Home({
   codeBlocksIds,
   loggedUser,
   loadCodeBlocksIds,
+  setLoggedUser,
 }: Props) {
   const navigate = useNavigate()
+
+  const logout = async () => {
+    try {
+      await authService.logout()
+      setLoggedUser(null)
+      navigate('/sign-in')
+    } catch (err) {
+      alert("couldn't logout...")
+    }
+  }
+
+  // Loading:
   if (!codeBlocksIds)
     return (
       <div className="home-page">
@@ -26,16 +40,6 @@ export default function Home({
   if (!codeBlocksIds.length)
     return <div className="home-page">No block codes yet... 🙂</div>
 
-  const logout = () => {
-    try {
-      authService.logout()
-      navigate('/sign-in')
-    } catch (err) {
-      console.log(err)
-      alert("couldn't logout...")
-    }
-  }
-
   return (
     <section className="home-page">
       <div className="logout-btn">
@@ -43,12 +47,19 @@ export default function Home({
         <button onClick={logout}>Logout</button>
       </div>
 
-      <button onClick={() => navigate('/add-code-block')}>
-        +Add Code block
-      </button>
-      <p>or</p>
+      {/* if mentor, show "add-btn" code: */}
+      {loggedUser?.isMentor && (
+        <>
+          <button onClick={() => navigate('/add-code-block')}>
+            +Add Code block
+          </button>
+
+          <p>or</p>
+        </>
+      )}
       <h1>Choose code block:</h1>
 
+      {/* codeBlocks list */}
       <div className="code-blocks">
         {codeBlocksIds.map((codeBlock) => (
           <button
@@ -62,7 +73,7 @@ export default function Home({
       </div>
 
       <button className="refresh-btn" onClick={loadCodeBlocksIds}>
-        Refresh
+        Refresh list
       </button>
     </section>
   )

@@ -10,6 +10,7 @@ import ProtectedRoute from './cmps/ProtectedRoute'
 import { authService } from './services/authService'
 import { IUser } from './interfaces/IUser'
 import SignUp from './pages/SignUp'
+import AddCodeBlockPage from './pages/AddCodeBlockPage'
 
 export default function App() {
   const [loggedUser, setLoggedUser] = useState<null | IUser>(null)
@@ -30,10 +31,12 @@ export default function App() {
   useEffect(() => {
     loadCodeBlocksIds()
   }, [])
+
   useEffect(() => {
     const loggedUser = authService.getLoggedUser()
     setLoggedUser(loggedUser)
   }, [])
+
   return (
     <div className="App">
       <Routes>
@@ -48,9 +51,14 @@ export default function App() {
         />
 
         <Route
+          path="/add-code-block"
+          element={<AddCodeBlockPage loadCodeBlocksIds={loadCodeBlocksIds} />}
+        />
+
+        <Route
           path="/:id"
           element={
-            <ProtectedRoute loggedUser={loggedUser}>
+            <ProtectedRoute>
               <CodeBlockPage loggedUser={loggedUser} />
             </ProtectedRoute>
           }
@@ -59,8 +67,12 @@ export default function App() {
         <Route
           path="/"
           element={
-            <ProtectedRoute loggedUser={loggedUser}>
-              <HomePage codeBlocksIds={codeBlocksIds} loggedUser={loggedUser} />
+            <ProtectedRoute>
+              <HomePage
+                codeBlocksIds={codeBlocksIds}
+                loggedUser={loggedUser}
+                loadCodeBlocksIds={loadCodeBlocksIds}
+              />
             </ProtectedRoute>
           }
         />

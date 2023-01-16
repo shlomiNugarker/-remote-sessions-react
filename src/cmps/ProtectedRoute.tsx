@@ -1,14 +1,14 @@
 import { ReactElement } from 'react'
 import { Navigate } from 'react-router-dom'
-import { IUser } from '../interfaces/IUser'
+
+import { authService } from '../services/authService'
 
 function ProtectedRoute({
   children,
-  loggedUser = null,
 }: {
   children: ReactElement<any, string | React.JSXElementConstructor<any>>
-  loggedUser: IUser | null
 }) {
+  const loggedUser = authService.getLoggedUser()
   if (!loggedUser) {
     return <Navigate to="/sign-in" replace />
   }

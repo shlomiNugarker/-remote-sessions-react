@@ -30,11 +30,10 @@ export default function SignIn({ setLoggedUser }: Props) {
       const loggedUser = await authService.login(creds)
       setLoggedUser(loggedUser)
       navigate('/')
+      cleanFields()
     } catch (err) {
       console.log(err)
       alert("couldn't sign in...")
-    } finally {
-      cleanFields()
     }
   }
 

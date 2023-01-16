@@ -7,9 +7,14 @@ import { IUser } from '../interfaces/IUser'
 type Props = {
   codeBlocksIds: { _id: string; title: string }[] | null
   loggedUser: IUser | null
+  loadCodeBlocksIds: () => Promise<void>
 }
 
-export default function Home({ codeBlocksIds, loggedUser }: Props) {
+export default function Home({
+  codeBlocksIds,
+  loggedUser,
+  loadCodeBlocksIds,
+}: Props) {
   const navigate = useNavigate()
   if (!codeBlocksIds)
     return (
@@ -37,6 +42,11 @@ export default function Home({ codeBlocksIds, loggedUser }: Props) {
         <p>Hello, {loggedUser?.fullName}</p>
         <button onClick={logout}>Logout</button>
       </div>
+
+      <button onClick={() => navigate('/add-code-block')}>
+        +Add Code block
+      </button>
+      <p>or</p>
       <h1>Choose code block:</h1>
 
       <div className="code-blocks">
@@ -50,6 +60,10 @@ export default function Home({ codeBlocksIds, loggedUser }: Props) {
           </button>
         ))}
       </div>
+
+      <button className="refresh-btn" onClick={loadCodeBlocksIds}>
+        Refresh
+      </button>
     </section>
   )
 }

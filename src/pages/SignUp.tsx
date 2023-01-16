@@ -37,12 +37,10 @@ export default function SignUp({ setLoggedUser }: Props) {
     try {
       const loggedUser = await authService.signup(creds)
       setLoggedUser(loggedUser)
+      cleanFields()
       navigate('/')
     } catch (err) {
-      console.log(err)
       alert("couldn't sign in...")
-    } finally {
-      cleanFields()
     }
   }
 

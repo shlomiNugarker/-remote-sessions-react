@@ -51,7 +51,7 @@ export default function App() {
           path="/:id"
           element={
             <ProtectedRoute loggedUser={loggedUser}>
-              <CodeBlockPage />
+              <CodeBlockPage loggedUser={loggedUser} />
             </ProtectedRoute>
           }
         />

@@ -14,10 +14,37 @@
 
     label {
       input {
+        width: 100%;
         padding: 5px;
         margin: 5px 0;
         border-radius: 5px;
         border: none;
+      }
+    }
+    .btns-container {
+      margin: 5px 0;
+      display: flex;
+      cursor: pointer;
+      p {
+        border: 1px solid white;
+        border-radius: 5px;
+        background-color: unset;
+        color: white;
+        padding: 5px;
+        &:nth-child(1) {
+          margin-right: 3px;
+        }
+        &:nth-child(2) {
+          margin-left: 3px;
+        }
+
+        &.chosen {
+          background-color: rgba(255, 255, 255, 0.171);
+        }
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.171);
+        }
       }
     }
   }

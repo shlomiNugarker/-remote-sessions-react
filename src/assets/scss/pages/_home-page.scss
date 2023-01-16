@@ -13,23 +13,31 @@
     text-align: center;
   }
 
+  .logout-btn {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 10px;
+    right: 15px;
+  }
+
+  button {
+    margin: 7px;
+    padding: 10px;
+    border: none;
+    border-radius: 15px;
+    transition: all, 0.3s;
+
+    &:hover {
+      background-color: #464d88cc;
+      color: white;
+    }
+  }
+
   .code-blocks {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
     justify-content: center;
-
-    button {
-      margin: 7px;
-      padding: 10px;
-      border: none;
-      border-radius: 15px;
-      transition: all, 0.3s;
-
-      &:hover {
-        background-color: #464d88cc;
-        color: white;
-      }
-    }
   }
 }

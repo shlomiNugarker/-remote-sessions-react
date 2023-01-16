@@ -8,6 +8,16 @@
   color: white;
   padding-top: 150px;
 
+  .add-btn {
+    background-color: rgb(50, 131, 68);
+    color: white;
+
+    &:hover {
+      color: black;
+      background-color: rgb(193, 229, 201);
+    }
+  }
+
   h1 {
     font-size: 30px;
     margin: 0 0 10px 0;
@@ -36,6 +46,7 @@
   }
 
   .code-blocks {
+    width: 60%;
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;

@@ -11,8 +11,6 @@ type Props = {
 
 export default function AddCodeBlockPage({ loadCodeBlocksIds }: Props) {
   const navigate = useNavigate()
-  // if (!loggedUser) return
-
   const [codeBlock, setCodeBlock] = useState<ICodeBlock | null>({
     code: "'use strict'",
     title: 'New code block',
@@ -84,6 +82,7 @@ export default function AddCodeBlockPage({ loadCodeBlocksIds }: Props) {
           useWorker: false,
         }}
       />
+
       <button onClick={addCodeBlock} className="Add-code-block-btn">
         Add
       </button>

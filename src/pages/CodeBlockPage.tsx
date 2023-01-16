@@ -18,24 +18,21 @@ import { useEffectUpdate } from '../hooks/useEffectUpdate'
 import { ICodeBlock } from '../interfaces/ICodeBlock'
 
 import loadingGif from '../assets/imgs/loading.gif'
+import { IUser } from '../interfaces/IUser'
 
-export default function CodeBlockPage() {
+type Props = {
+  loggedUser: IUser | null
+}
+
+export default function CodeBlockPage({ loggedUser }: Props) {
   const params = useParams()
   const navigate = useNavigate()
   const [isEditTitle, setIsEditTitle] = useState(false)
   const [codeBlock, setCodeBlock] = useState<ICodeBlock | null>(null)
   const debouncedValue = useDebounce<ICodeBlock | null>(codeBlock, 200)
   const [watchers, setWatchers] = useState<string[] | null>(null)
-  const [isMentor, setIsMentor] = useState(true)
   const [isCorrect, setIsCorrect] = useState(false)
   const [isUserTyped, setIsUserTyped] = useState(false)
-
-  useEffect(() => {
-    // Always the first user in watchers list is the mentor:
-    if (!socket || !watchers) return
-    const isMentor = socket.id === watchers[0]
-    setIsMentor(isMentor)
-  }, [watchers])
 
   // Loading specific codeBlock with id:
   const loadCode = useCallback(async () => {
@@ -67,7 +64,7 @@ export default function CodeBlockPage() {
   // Save the code after debouncedValue changed:
   const saveCodeBlock = async () => {
     try {
-      if (!codeBlock || isMentor) return
+      if (!codeBlock) return
       const savedCodeBlock = await codeBlockService.save(codeBlock)
       socketService.emit('code-block-saved', savedCodeBlock)
     } catch (err) {
@@ -153,7 +150,7 @@ export default function CodeBlockPage() {
                   (prevVal) =>
                     ({
                       ...prevVal,
-                      title: isMentor ? codeBlock.title : ev.target.value,
+                      title: ev.target.value,
                     } as ICodeBlock)
                 )
               }
@@ -165,7 +162,9 @@ export default function CodeBlockPage() {
         <p>{watchers?.length || 0} people are viewing this code</p>
         <p>
           You are a{' '}
-          <span className="underline">{isMentor ? 'mentor' : 'student'}</span>{' '}
+          <span className="underline">
+            {loggedUser?.isMentor ? 'mentor' : 'student'}
+          </span>{' '}
         </p>
 
         {codeBlock.solution ? (
@@ -188,7 +187,7 @@ export default function CodeBlockPage() {
           fontSize={16}
           showPrintMargin={true}
           showGutter={true}
-          readOnly={isMentor}
+          readOnly={false}
           wrapEnabled={true}
           onChange={(newValue) => {
             if (!isUserTyped) setIsUserTyped(true)

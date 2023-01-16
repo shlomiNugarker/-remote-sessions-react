@@ -9,6 +9,7 @@ type Props = {
   loggedUser: IUser | null
   loadCodeBlocksIds: () => Promise<void>
   setLoggedUser: React.Dispatch<React.SetStateAction<IUser | null>>
+  connectedSockets: string[] | null
 }
 
 export default function Home({
@@ -16,6 +17,7 @@ export default function Home({
   loggedUser,
   loadCodeBlocksIds,
   setLoggedUser,
+  connectedSockets,
 }: Props) {
   const navigate = useNavigate()
 
@@ -47,16 +49,19 @@ export default function Home({
         <button onClick={logout}>Logout</button>
       </div>
 
-      {/* if mentor, show "add-btn" code: */}
+      {/* if mentor, show "add-code" btn: */}
       {loggedUser?.isMentor && (
         <>
-          <button onClick={() => navigate('/add-code-block')}>
+          <button
+            className="add-btn"
+            onClick={() => navigate('/add-code-block')}
+          >
             +Add Code block
           </button>
-
           <p>or</p>
         </>
       )}
+
       <h1>Choose code block:</h1>
 
       {/* codeBlocks list */}
@@ -71,6 +76,12 @@ export default function Home({
           </button>
         ))}
       </div>
+
+      <br />
+
+      {connectedSockets?.length && (
+        <p>{connectedSockets.length} people are visiting this page now.</p>
+      )}
 
       <button className="refresh-btn" onClick={loadCodeBlocksIds}>
         Refresh list

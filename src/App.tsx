@@ -11,9 +11,13 @@ import { authService } from './services/authService'
 import { IUser } from './interfaces/IUser'
 import SignUp from './pages/SignUp'
 import AddCodeBlockPage from './pages/AddCodeBlockPage'
+import { socketService } from './services/socketService'
 
 export default function App() {
   const [loggedUser, setLoggedUser] = useState<null | IUser>(null)
+  const [connectedSockets, setConnectedSockets] = useState<null | string[]>(
+    null
+  )
   const [codeBlocksIds, setCodeBlocksIds] = useState<
     { _id: string; title: string }[] | null
   >(null)
@@ -29,12 +33,23 @@ export default function App() {
   }
 
   useEffect(() => {
+    const loggedUser = authService.getLoggedUser()
+    setLoggedUser(loggedUser)
+
     loadCodeBlocksIds()
   }, [])
 
   useEffect(() => {
-    const loggedUser = authService.getLoggedUser()
-    setLoggedUser(loggedUser)
+    socketService.on(
+      'update-connected-sockets',
+      (connectedSockets: string[]) => {
+        setConnectedSockets(connectedSockets)
+      }
+    )
+
+    return () => {
+      socketService.off('update-connected-sockets')
+    }
   }, [])
 
   return (
@@ -77,6 +92,7 @@ export default function App() {
                 loggedUser={loggedUser}
                 loadCodeBlocksIds={loadCodeBlocksIds}
                 setLoggedUser={setLoggedUser}
+                connectedSockets={connectedSockets}
               />
             </ProtectedRoute>
           }

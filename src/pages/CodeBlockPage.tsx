@@ -83,7 +83,16 @@ export default function CodeBlockPage({ loggedUser }: Props) {
       if (isCodeBlockChanged) setCodeBlock(codeBlockFromSocket)
     })
 
-    // when someone enter/ exit this page:
+    return () => {
+      socketService.off('update-code-block')
+    }
+  }, [codeBlock])
+
+  useEffect(() => {
+    if (!codeBlock?._id) return
+    // when the user enter the page:
+    socketService.emit('someone-enter-code-block', codeBlock._id)
+
     if (codeBlock._id) {
       socketService.on(
         'update-watchers-on-specific-code-block',
@@ -92,21 +101,13 @@ export default function CodeBlockPage({ loggedUser }: Props) {
         }
       )
     }
-    return () => {
-      socketService.off('update-code-block')
-      socketService.off('update-watchers-on-code-block')
-    }
-  }, [codeBlock])
 
-  useEffect(() => {
-    if (codeBlock?._id)
-      // when the user enter the page:
-      socketService.emit('someone-enter-code-block', codeBlock._id)
     return () => {
-      if (codeBlock?._id) {
-        // when the user left the page:
-        socketService.emit('someone-left-code-block', codeBlock._id)
-      }
+      if (!codeBlock?._id) return
+      // when the user left the page:
+      socketService.emit('someone-left-code-block', codeBlock._id)
+
+      socketService.off('update-watchers-on-code-block')
     }
   }, [codeBlock?._id])
 
@@ -139,7 +140,8 @@ export default function CodeBlockPage({ loggedUser }: Props) {
               type="text"
               value={codeBlock.title}
               onBlur={() => setIsEditTitle(false)}
-              onChange={(ev) =>
+              onChange={(ev) => {
+                if (!isUserTyped) setIsUserTyped(true)
                 setCodeBlock(
                   (prevVal) =>
                     ({
@@ -147,7 +149,7 @@ export default function CodeBlockPage({ loggedUser }: Props) {
                       title: ev.target.value,
                     } as ICodeBlock)
                 )
-              }
+              }}
             />
           </p>
         )}

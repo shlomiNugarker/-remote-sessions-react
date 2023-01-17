@@ -39,9 +39,6 @@ export default function Home({
       </div>
     )
 
-  if (!codeBlocksIds.length)
-    return <div className="home-page">No block codes yet... 🙂</div>
-
   return (
     <section className="home-page">
       <div className="logout-btn">
@@ -66,15 +63,16 @@ export default function Home({
 
       {/* codeBlocks list */}
       <div className="code-blocks">
-        {codeBlocksIds.map((codeBlock) => (
-          <button
-            className="code-block-btn"
-            key={codeBlock._id}
-            onClick={() => navigate(`/${codeBlock._id}`)}
-          >
-            {codeBlock.title}
-          </button>
-        ))}
+        {(codeBlocksIds.length &&
+          codeBlocksIds.map((codeBlock) => (
+            <button
+              className="code-block-btn"
+              key={codeBlock._id}
+              onClick={() => navigate(`/${codeBlock._id}`)}
+            >
+              {codeBlock.title}
+            </button>
+          ))) || <span>No block codes yet... 🙂</span>}
       </div>
 
       <br />

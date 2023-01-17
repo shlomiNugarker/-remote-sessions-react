@@ -33,6 +33,8 @@
 
 - MongoDB
 
+- JWT
+
 ## Screenshot
 
 <a href="" target="_blank">

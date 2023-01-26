@@ -1,10 +1,8 @@
-// import React from 'react'
 import { render, screen } from '@testing-library/react'
 import App from './App'
 
 import { BrowserRouter as Router } from 'react-router-dom'
-
-test('renders the App cmp', async () => {
+test('renders the App cmp', () => {
   render(
     <Router>
       <App />

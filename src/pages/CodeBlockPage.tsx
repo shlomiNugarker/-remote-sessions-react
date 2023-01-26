@@ -155,14 +155,13 @@ export default function CodeBlockPage({ loggedUser }: Props) {
         )}
 
         {/* More details: */}
-        <p>{watchers?.length || 0} people are viewing this code</p>
+        <p>{watchers?.length || 0} browsers are viewing this code</p>
         <p>
           You are a{' '}
           <span className="underline">
             {loggedUser?.isMentor ? 'mentor' : 'student'}
           </span>{' '}
         </p>
-
         {codeBlock.solution ? (
           isCorrect ? (
             <p className="emoji">
@@ -174,7 +173,6 @@ export default function CodeBlockPage({ loggedUser }: Props) {
             </p>
           )
         ) : null}
-
         {/* Editor: */}
         <AceEditor
           placeholder=""

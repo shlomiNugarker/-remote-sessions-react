@@ -27,7 +27,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "react-scripts test --watchAll --coverage",
     "eject": "react-scripts eject"
   },
   "jest": {
@@ -36,7 +36,12 @@
     },
     "transformIgnorePatterns": [
       "node_modules/(?!@shotgunjed)/"
-    ]
+    ],
+    "coverageThreshold": {
+      "global": {
+        "lines": 80
+      }
+    }
   },
   "eslintConfig": {
     "extends": [

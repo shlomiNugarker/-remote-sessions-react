@@ -1,9 +1,27 @@
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import App from './App';
+// import React from 'react'
+import { render, screen } from '@testing-library/react'
+import App from './App'
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
-});
+import { BrowserRouter as Router } from 'react-router-dom'
+
+test('renders the App cmp', async () => {
+  render(
+    <Router>
+      <App />
+    </Router>
+  )
+})
+
+describe('Testing sum', () => {
+  function sum(a: number, b: number) {
+    return a + b
+  }
+
+  it('should equal 4', () => {
+    expect(sum(2, 2)).toBe(4)
+  })
+
+  test('also should equal 4', () => {
+    expect(sum(2, 2)).toBe(4)
+  })
+})

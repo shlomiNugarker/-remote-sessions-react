@@ -35,6 +35,10 @@
 
 - JWT
 
+- Formik
+
+- Yup
+
 ## Screenshot
 
 <a href="" target="_blank">

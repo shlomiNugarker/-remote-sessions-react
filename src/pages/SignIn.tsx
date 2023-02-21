@@ -3,6 +3,7 @@ import { authService } from '../services/authService'
 import { IUser } from '../interfaces/IUser'
 
 import { useFormik } from 'formik'
+import * as Yup from 'yup'
 
 type Props = {
   setLoggedUser: React.Dispatch<React.SetStateAction<IUser | null>>
@@ -16,6 +17,13 @@ export default function SignIn({ setLoggedUser }: Props) {
       userName: '',
       password: '',
     },
+    validationSchema: Yup.object().shape({
+      userName: Yup.string().required('UserName is required'),
+
+      password: Yup.string()
+        .required('Password is required')
+        .min(4, 'Password is too short - should be 4 chars minimum'),
+    }),
     onSubmit: async (values) => {
       try {
         const loggedUser = await authService.login(values)
@@ -41,6 +49,7 @@ export default function SignIn({ setLoggedUser }: Props) {
             value={formik.values.userName}
           />
         </label>
+        <span>{formik.touched.userName && formik.errors.userName}</span>
         <label htmlFor="password">
           <input
             id="password"
@@ -51,6 +60,7 @@ export default function SignIn({ setLoggedUser }: Props) {
             value={formik.values.password}
           />
         </label>
+        <span>{formik.touched.password && formik.errors.password}</span>
         <button type="submit">Sign in</button>
       </form>
       <br />

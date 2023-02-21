@@ -5,11 +5,12 @@ import { authService } from '../services/authService'
 import { IUser } from '../interfaces/IUser'
 
 type Props = {
-  codeBlocksIds: { _id: string; title: string }[] | null
+  codeBlocksIds: { _id: string; title: string }[]
+  isLoadingCodeBlocks: boolean
   loggedUser: IUser | null
   loadCodeBlocksIds: () => Promise<void>
   setLoggedUser: React.Dispatch<React.SetStateAction<IUser | null>>
-  connectedSockets: string[] | null
+  connectedSockets: string[]
 }
 
 export default function Home({
@@ -18,6 +19,7 @@ export default function Home({
   loadCodeBlocksIds,
   setLoggedUser,
   connectedSockets,
+  isLoadingCodeBlocks,
 }: Props) {
   const navigate = useNavigate()
 
@@ -32,7 +34,7 @@ export default function Home({
   }
 
   // Loading:
-  if (!codeBlocksIds)
+  if (isLoadingCodeBlocks)
     return (
       <div className="home-page">
         <img className="loading-gif" src={loadingGif} alt="" />

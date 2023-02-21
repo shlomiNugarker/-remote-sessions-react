@@ -20,11 +20,17 @@ type Props = {
 
 export default function CodeBlockPage({ loggedUser }: Props) {
   const params = useParams()
+  const [isLoadingCodeBlock, setIsLoadingCodeBlock] = useState(true)
   const navigate = useNavigate()
   const [isEditTitle, setIsEditTitle] = useState(false)
-  const [codeBlock, setCodeBlock] = useState<ICodeBlock | null>(null)
+  const [codeBlock, setCodeBlock] = useState<ICodeBlock>({
+    title: '',
+    code: '',
+    createdBy: '',
+    solution: '',
+  })
   const debouncedValue = useDebounce<ICodeBlock | null>(codeBlock, 200)
-  const [watchers, setWatchers] = useState<string[] | null>(null)
+  const [watchers, setWatchers] = useState<string[]>([])
   const [isCorrect, setIsCorrect] = useState(false)
   const [isUserTyped, setIsUserTyped] = useState(false)
 
@@ -37,6 +43,8 @@ export default function CodeBlockPage({ loggedUser }: Props) {
     } catch (err) {
       alert("couldn't find code-block")
       navigate('/')
+    } finally {
+      setIsLoadingCodeBlock(false)
     }
   }, [navigate, params.id])
   useEffect(() => {
@@ -46,9 +54,8 @@ export default function CodeBlockPage({ loggedUser }: Props) {
   // Check if the code is correct:
   const checkSolution = () => {
     if (
-      codeBlock &&
-      codeBlock.solution &&
       !isCorrect &&
+      codeBlock?.solution &&
       codeBlock.code.trim() === codeBlock.solution.trim()
     ) {
       setIsCorrect(true)
@@ -73,7 +80,6 @@ export default function CodeBlockPage({ loggedUser }: Props) {
   // Handle sockets:
   useEffect(() => {
     if (!codeBlock) return
-
     // if someone updated the code:
     socketService.on('update-code-block', (codeBlockFromSocket: ICodeBlock) => {
       const isCodeBlockChanged =
@@ -92,7 +98,6 @@ export default function CodeBlockPage({ loggedUser }: Props) {
     if (!codeBlock?._id) return
     // when the user enter the page:
     socketService.emit('someone-enter-code-block', codeBlock._id)
-
     if (codeBlock._id) {
       socketService.on(
         'update-watchers-on-specific-code-block',
@@ -101,7 +106,6 @@ export default function CodeBlockPage({ loggedUser }: Props) {
         }
       )
     }
-
     return () => {
       if (!codeBlock?._id) return
       // when the user left the page:
@@ -112,7 +116,7 @@ export default function CodeBlockPage({ loggedUser }: Props) {
   }, [codeBlock?._id])
 
   // Loading:
-  if (!codeBlock)
+  if (isLoadingCodeBlock)
     return (
       <p className="code-block-page loading">
         <img className="loading-gif" src={loadingGif} alt="loading" />
@@ -155,7 +159,7 @@ export default function CodeBlockPage({ loggedUser }: Props) {
         )}
 
         {/* More details: */}
-        <p>{watchers?.length || 0} browsers are viewing this code</p>
+        <p>{watchers.length || 0} browsers are viewing this code</p>
         <p>
           You are a{' '}
           <span className="underline">

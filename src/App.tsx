@@ -4,7 +4,7 @@ import HomePage from './pages/HomePage'
 import CodeBlockPage from './pages/CodeBlockPage'
 
 import { codeBlockService } from './services/codeBlockService'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import SignIn from './pages/SignIn'
 import ProtectedRoute from './cmps/ProtectedRoute'
 import { authService } from './services/authService'
@@ -15,29 +15,30 @@ import { socketService } from './services/socketService'
 
 export default function App() {
   const [loggedUser, setLoggedUser] = useState<null | IUser>(null)
-  const [connectedSockets, setConnectedSockets] = useState<null | string[]>(
-    null
-  )
+  const [isLoadingCodeBlocks, setIsLoadingCodeBlocks] = useState(true)
+  const [connectedSockets, setConnectedSockets] = useState<string[]>([])
   const [codeBlocksIds, setCodeBlocksIds] = useState<
-    { _id: string; title: string }[] | null
-  >(null)
+    { _id: string; title: string }[]
+  >([])
 
-  const loadCodeBlocksIds = async () => {
+  const loadCodeBlocksIds = useCallback(async () => {
     try {
       const codeBlocksIds = await codeBlockService.queryIds()
       setCodeBlocksIds(codeBlocksIds)
     } catch (err) {
       alert("couldn't load code blocks...")
       setCodeBlocksIds([])
+    } finally {
+      setIsLoadingCodeBlocks(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     const loggedUser = authService.getLoggedUser()
     setLoggedUser(loggedUser)
 
     loadCodeBlocksIds()
-  }, [])
+  }, [loadCodeBlocksIds])
 
   useEffect(() => {
     socketService.on(
@@ -46,7 +47,6 @@ export default function App() {
         setConnectedSockets(connectedSockets)
       }
     )
-
     return () => {
       socketService.off('update-connected-sockets')
     }
@@ -88,6 +88,7 @@ export default function App() {
           element={
             <ProtectedRoute path="/">
               <HomePage
+                isLoadingCodeBlocks={isLoadingCodeBlocks}
                 codeBlocksIds={codeBlocksIds}
                 loggedUser={loggedUser}
                 loadCodeBlocksIds={loadCodeBlocksIds}

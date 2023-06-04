@@ -7,7 +7,7 @@
 > Making remote sessions, sharing a piece of code
 > with your mentor/ student, observe him while he is writing and changing the code in real time.
 
-> For the project hosted in onrender: https://remote-sessions.onrender.com/
+> For the project hosted in railway: https://remote-sessions-production.up.railway.app
 
 > Backend: https://github.com/shlomiNugarker/remote-sessions-backend
 

@@ -9,6 +9,8 @@
 
 > For the project hosted in railway: https://remote-sessions-production.up.railway.app
 
+> username: guest, password: 1234
+
 > Backend: https://github.com/shlomiNugarker/remote-sessions-backend
 
 ## Technologies Used
